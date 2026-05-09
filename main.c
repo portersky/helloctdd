@@ -13,7 +13,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char const* argv[]) {
 
     char upper[32];
     str_upper(upper, "hello, tdd", sizeof(upper));
-    log_message(upper);
+    log_info(upper);
 
     return 0;
 }

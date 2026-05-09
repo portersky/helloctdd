@@ -16,7 +16,7 @@ add_subdirectory(ctdd)
 add_executable(main main.c)
 target_include_directories(main PRIVATE .)
 target_compile_features(main PRIVATE c_std_23)
-target_link_libraries(main PRIVATE ctdd_str ctdd_report ctdd_logger)
+target_link_libraries(main PRIVATE ctdd_str ctdd_report ctdd_logger ctdd_log_write)
 
 # Testing
 enable_testing()

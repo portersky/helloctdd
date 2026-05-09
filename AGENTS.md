@@ -91,6 +91,8 @@ to the custom scripts instead of system-installed packages.
 - Use conventional commit prefixes (`feat:`, `fix:`, `docs:`, `chore:`,
   etc.)
 - Separate subject from body with a blank line
+- Do **not** add yourself as a co-author (`Co-Authored-By:` trailers are
+  forbidden)
 
 Example:
 

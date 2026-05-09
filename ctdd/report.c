@@ -5,5 +5,5 @@
 void report_value(char const* label, int value) {
     char buf[256];
     snprintf(buf, sizeof(buf), "%s: %d", label, value);
-    log_message(buf);
+    log_info(buf);
 }

@@ -25,8 +25,6 @@ function(cmock_generate_mock target header)
         VERBATIM
     )
     target_sources("${target}" PRIVATE "${mock_src}")
-    # MOCK_GEN_DIR for the generated header; header_dir so the generated
-    # #include "logger.h" resolves without the ctdd/ prefix
     target_include_directories("${target}" PRIVATE "${MOCK_GEN_DIR}" "${header_dir}")
 endfunction()
 
@@ -37,10 +35,18 @@ target_link_libraries(test_str PRIVATE ctdd_str Unity::Unity)
 target_compile_features(test_str PRIVATE c_std_23)
 add_test(NAME test_str COMMAND test_str)
 
-# report tests — CMock-generated mock for log_message
+# report tests — mocks logger.h so log_info calls are intercepted
 add_executable(test_report test_report.c)
 target_include_directories(test_report PRIVATE "${CMAKE_SOURCE_DIR}")
 target_link_libraries(test_report PRIVATE ctdd_report Unity::Unity CMock::CMock)
 target_compile_features(test_report PRIVATE c_std_23)
 cmock_generate_mock(test_report "${CMAKE_SOURCE_DIR}/ctdd/logger.h")
 add_test(NAME test_report COMMAND test_report)
+
+# logger tests — mocks log_write.h so output calls are intercepted
+add_executable(test_logger test_logger.c)
+target_include_directories(test_logger PRIVATE "${CMAKE_SOURCE_DIR}")
+target_link_libraries(test_logger PRIVATE ctdd_logger Unity::Unity CMock::CMock)
+target_compile_features(test_logger PRIVATE c_std_23)
+cmock_generate_mock(test_logger "${CMAKE_SOURCE_DIR}/ctdd/log_write.h")
+add_test(NAME test_logger COMMAND test_logger)
