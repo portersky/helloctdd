@@ -36,6 +36,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(unity)
 
+# Unity sets INTERFACE_SYSTEM_INCLUDE_DIRECTORIES to a path inside the build
+# tree, which CMake rejects on newer versions. The path stays in
+# INTERFACE_INCLUDE_DIRECTORIES so headers are still found.
+if (TARGET unity)
+    set_target_properties(unity PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "")
+endif()
+
 if (NOT TARGET Unity::Unity)
     if (TARGET unity)
         add_library(Unity::Unity ALIAS unity)
@@ -49,11 +56,6 @@ set(Unity_LIBRARIES    Unity::Unity)
 set(Unity_VERSION      "${UNITY_VERSION}")
 set(Unity_INCLUDE_DIR  "${unity_SOURCE_DIR}/src")
 
-if (Unity_INCLUDE_DIR AND TARGET unity)
-    set_target_properties(unity PROPERTIES
-        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${Unity_INCLUDE_DIR}"
-    )
-endif()
 
 if (TARGET unity)
     target_compile_definitions(unity PUBLIC
