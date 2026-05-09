@@ -166,5 +166,5 @@ deps/
 
 ## Platform Support
 
-The project supports Windows, Linux, Emscripten, and Android via
+The project supports Windows, Linux, macOS, Emscripten, and Android via
 `Platform.cmake` and `Flags.cmake` in `deps/`.
