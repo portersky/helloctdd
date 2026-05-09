@@ -21,13 +21,23 @@ if (ENABLE_COVERAGE)
     find_program(GCOVR_EXE gcovr REQUIRED)
 
     if (CMAKE_C_COMPILER_ID MATCHES "Clang")
-        find_program(LLVM_COV_EXE llvm-cov REQUIRED)
         # gcovr needs a single-token gcov executable. Wrap llvm-cov gcov in a
         # script placed in the build dir (guaranteed no spaces in path).
+        # AppleClang ships llvm-cov inside Xcode, reached only via xcrun.
         if (WIN32)
+            find_program(LLVM_COV_EXE llvm-cov REQUIRED)
             set(GCOV_EXECUTABLE "${CMAKE_BINARY_DIR}/llvm-gcov.bat")
             file(WRITE "${GCOV_EXECUTABLE}" "@echo off\r\n\"${LLVM_COV_EXE}\" gcov %*\r\n")
+        elseif (CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
+            find_program(XCRUN_EXE xcrun REQUIRED)
+            set(GCOV_EXECUTABLE "${CMAKE_BINARY_DIR}/llvm-gcov.sh")
+            file(WRITE "${GCOV_EXECUTABLE}" "#!/bin/sh\nexec xcrun llvm-cov gcov \"$@\"\n")
+            file(CHMOD "${GCOV_EXECUTABLE}"
+                PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                            GROUP_READ GROUP_EXECUTE
+                            WORLD_READ WORLD_EXECUTE)
         else()
+            find_program(LLVM_COV_EXE llvm-cov REQUIRED)
             set(GCOV_EXECUTABLE "${CMAKE_BINARY_DIR}/llvm-gcov.sh")
             file(WRITE "${GCOV_EXECUTABLE}" "#!/bin/sh\nexec \"${LLVM_COV_EXE}\" gcov \"$@\"\n")
             file(CHMOD "${GCOV_EXECUTABLE}"
@@ -35,7 +45,7 @@ if (ENABLE_COVERAGE)
                             GROUP_READ GROUP_EXECUTE
                             WORLD_READ WORLD_EXECUTE)
         endif()
-        message(STATUS "Coverage: enabled (gcovr: ${GCOVR_EXE}, gcov: ${LLVM_COV_EXE} gcov)")
+        message(STATUS "Coverage: enabled (gcovr: ${GCOVR_EXE}, gcov: llvm-cov gcov)")
     else()
         set(GCOV_EXECUTABLE "gcov")
         message(STATUS "Coverage: enabled (gcovr: ${GCOVR_EXE})")
