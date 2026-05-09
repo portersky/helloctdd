@@ -55,4 +55,11 @@ if (Unity_INCLUDE_DIR AND TARGET unity)
     )
 endif()
 
+if (TARGET unity)
+    target_compile_definitions(unity PUBLIC
+        UNITY_OUTPUT_COLOR
+        UNITY_INCLUDE_PRINT_FORMATTED
+    )
+endif()
+
 set(UNITY_LICENSE_FILE "${unity_SOURCE_DIR}/LICENSE.txt" CACHE FILEPATH "Path to Unity license file")

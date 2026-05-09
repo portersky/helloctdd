@@ -15,7 +15,8 @@
 ```sh
 cmake -S . -B build -G Ninja
 ninja -C build          # build
-ninja -C build test     # run tests
+ninja -C build check    # run tests (full Unity output, colored)
+ninja -C build test     # run tests (CTest summary only)
 ./build/main            # run (Linux/macOS)
 ./build/main.exe        # run (Windows)
 ```

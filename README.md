@@ -26,16 +26,13 @@ ninja -C build
 ## Test
 
 ```sh
-ninja -C build test          # summary output
-ctest --test-dir build -V    # verbose (shows each test name)
+ninja -C build check         # full Unity output, colored
+ninja -C build test          # CTest summary only
 ```
 
-Run a single suite directly for the clearest output:
-
-```sh
-./build/tests/test_str.exe
-./build/tests/test_report.exe
-```
+`check` builds all suites and runs CTest with `--output-on-failure`,
+so assertion-level detail appears on any failure without running
+binaries by hand.
 
 ## Run
 
@@ -84,6 +81,7 @@ target_include_directories(test_counter PRIVATE "${CMAKE_SOURCE_DIR}")
 target_link_libraries(test_counter PRIVATE ctdd_counter Unity::Unity)
 target_compile_features(test_counter PRIVATE c_std_23)
 add_test(NAME test_counter COMMAND test_counter)
+list(APPEND TEST_TARGETS test_counter)
 ```
 
 ### 4. Add a stub, confirm RED, then implement GREEN
