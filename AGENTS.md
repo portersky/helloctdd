@@ -2,7 +2,8 @@
 
 ## Project Overview
 
-`cuber` is an OpenGL 3D renderer with multiple scenes.
+`ctdd` is a C23 project wired for test-driven development using
+Unity and CMock.
 
 ## Build System
 
@@ -27,12 +28,12 @@ Build:
 ninja -C build
 ```
 
-Run tests — full Unity output, colored:
+Run tests (full Unity output, colored):
 ```sh
 ninja -C build check
 ```
 
-Run tests — CTest summary only:
+Run tests (CTest summary only):
 ```sh
 ninja -C build test
 ```
@@ -63,16 +64,6 @@ To add a new dependency:
 1. Add the corresponding `Find<name>.cmake` to `deps/`
 2. Add `find_package(<name> REQUIRED)` to `CMakeLists.txt`
 3. Link with `<name>::<name>` in `target_link_libraries()`
-
-### Static Libraries
-
-The project is split into static libraries:
-
-- **`cbt_opengl`** — OpenGL abstraction and window management (window,
-  context, buffer, texture, vao, shader, descriptor)
-- **`cbt_scene`** — Base scene class
-- **`scenes_cube`** — Spinning cube scene implementation
-- **`scenes_sphere`** — Cube-to-sphere mapped mesh with diffuse lighting
 
 ### CMake Module Path
 
@@ -145,7 +136,8 @@ in HH:MM:SS.mmm format, updating every 10ms with color output.
   `-` or numbered lists, fenced code blocks with language hints
   (```` ```cpp ````, ```` ```sh ````).
 - Keep examples concise, up-to-date, and self-documenting.
-- Each shell command gets its own fenced code block — do **not** combine
+- Do not use em dashes (`—`). Use a colon or rewrite the sentence.
+- Each shell command gets its own fenced code block; do **not** combine
   multiple commands into one block. Precede each block with a short
   plain-text label describing what the command does:
 
@@ -162,7 +154,7 @@ in HH:MM:SS.mmm format, updating every 10ms with color output.
 ctdd/
   str.h / str.c        Pure string utilities (no dependencies)
   report.h / report.c  Formats a value and calls log_message()
-  logger.h / logger.c  Real log_message — printf to stdout
+  logger.h / logger.c  Real log_message via printf to stdout
 main.c                 Entry point
 tests/
   test_str.c           Unity state-based tests for ctdd/str

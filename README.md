@@ -59,7 +59,7 @@ ninja -C build-cov coverage
 
 Open `build-cov/coverage/index.html` in a browser to view results.
 
-Only `ctdd/` source files are measured — Unity, CMock, and generated
+Only `ctdd/` source files are measured. Unity, CMock, and generated
 mock files are excluded. Requires GCC or Clang with gcov support, and
 `gcovr` on `PATH`.
 
