@@ -9,6 +9,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/deps")
 include(Platform)
 include(Flags)
 
+include(Coverage)
+
 # Example Library
 add_subdirectory(ctdd)
 

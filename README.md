@@ -9,38 +9,75 @@ manual installation required beyond the tools listed below.
 
 ## Requirements
 
-| Tool                | Purpose               |
-| ------------------- | --------------------- |
-| CMake ≥ 3.21        | Build system          |
-| Ninja               | Build backend         |
-| C23 compiler        | GCC 14+, Clang 18+    |
-| Ruby ≥ 3.0          | CMock mock generation |
+| Tool         | Purpose                                               |
+| ------------ | ----------------------------------------------------- |
+| CMake ≥ 3.21 | Build system                                          |
+| Ninja        | Build backend                                         |
+| C23 compiler | GCC 14+, Clang 18+                                    |
+| Ruby ≥ 3.0   | CMock mock generation                                 |
+| gcovr ≥ 6.0  | Coverage reports — optional (`uv tool install gcovr`) |
 
 ## Build
 
+Configure:
 ```sh
 cmake -S . -B build -G Ninja
+```
+
+Build:
+```sh
 ninja -C build
 ```
 
 ## Test
 
+Full Unity output with colors:
 ```sh
-ninja -C build check         # full Unity output, colored
-ninja -C build test          # CTest summary only
+ninja -C build check
+```
+
+CTest summary only:
+```sh
+ninja -C build test
 ```
 
 `check` builds all suites and runs CTest with `--output-on-failure`,
 so assertion-level detail appears on any failure without running
 binaries by hand.
 
-## Run
+## Coverage
 
+Configure with coverage instrumentation:
 ```sh
-./build/main.exe             # Windows
-./build/main                 # Linux / macOS
+cmake -S . -B build-cov -G Ninja -DENABLE_COVERAGE=ON
 ```
 
+Generate the HTML report:
+```sh
+ninja -C build-cov coverage
+```
+
+Open `build-cov/coverage/index.html` in a browser to view results.
+
+Only `ctdd/` source files are measured — Unity, CMock, and generated
+mock files are excluded. Requires GCC or Clang with gcov support, and
+`gcovr` on `PATH`.
+
+> **Windows note:** requires GCC (e.g. `scoop install gcc`) or a Clang
+> build that includes compiler-rt. A custom Clang without compiler-rt
+> will fail at link time.
+
+## Run
+
+Windows:
+```sh
+./build/main.exe
+```
+
+Linux / macOS:
+```sh
+./build/main
+```
 
 ## Adding a new module (TDD workflow)
 

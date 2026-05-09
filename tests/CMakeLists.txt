@@ -67,3 +67,27 @@ add_custom_target(check
     USES_TERMINAL
     DEPENDS ${TEST_TARGETS}
 )
+
+if (ENABLE_COVERAGE)
+    set(COVERAGE_DIR "${CMAKE_BINARY_DIR}/coverage")
+    add_custom_target(coverage
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${COVERAGE_DIR}"
+        COMMAND ${GCOVR_EXE}
+                --gcov-executable "${GCOV_EXECUTABLE}"
+                --root "${CMAKE_SOURCE_DIR}"
+                --filter "${CMAKE_SOURCE_DIR}/ctdd/"
+                --exclude "${CMAKE_SOURCE_DIR}/tests/"
+                --exclude ".*Mock.*"
+                --exclude ".*unity.*"
+                --exclude ".*cmock.*"
+                --html-details "${COVERAGE_DIR}/index.html"
+                --txt
+                --print-summary
+                "${CMAKE_BINARY_DIR}"
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+        USES_TERMINAL
+        DEPENDS ${TEST_TARGETS}
+        COMMENT "Coverage report: ${COVERAGE_DIR}/index.html"
+    )
+endif()

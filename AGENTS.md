@@ -12,13 +12,44 @@
 
 ### Commands
 
+Configure (default):
 ```sh
 cmake -S . -B build -G Ninja
-ninja -C build          # build
-ninja -C build check    # run tests (full Unity output, colored)
-ninja -C build test     # run tests (CTest summary only)
-./build/main            # run (Linux/macOS)
-./build/main.exe        # run (Windows)
+```
+
+Configure with coverage:
+```sh
+cmake -S . -B build-cov -G Ninja -DENABLE_COVERAGE=ON
+```
+
+Build:
+```sh
+ninja -C build
+```
+
+Run tests — full Unity output, colored:
+```sh
+ninja -C build check
+```
+
+Run tests — CTest summary only:
+```sh
+ninja -C build test
+```
+
+Run tests and generate coverage HTML:
+```sh
+ninja -C build-cov coverage
+```
+
+Run (Linux/macOS):
+```sh
+./build/main
+```
+
+Run (Windows):
+```sh
+./build/main.exe
 ```
 
 ### Dependencies
@@ -114,6 +145,15 @@ in HH:MM:SS.mmm format, updating every 10ms with color output.
   `-` or numbered lists, fenced code blocks with language hints
   (```` ```cpp ````, ```` ```sh ````).
 - Keep examples concise, up-to-date, and self-documenting.
+- Each shell command gets its own fenced code block — do **not** combine
+  multiple commands into one block. Precede each block with a short
+  plain-text label describing what the command does:
+
+  Setup build:
+  ```sh
+  cmake -S . -B build -G Ninja
+  ```
+
 - This file (`AGENTS.md`) follows its own rules.
 
 ## Source Layout

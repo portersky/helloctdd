@@ -2,6 +2,7 @@
 build
 build-*
 cmake-build-*
+coverage
 
 # Editors
 .vscode
