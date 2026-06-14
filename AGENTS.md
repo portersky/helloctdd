@@ -164,6 +164,90 @@ deps/
   FindCMock.cmake      Fetches CMock v2.6.0 via ZIP
 ```
 
+## TDD Workflow
+
+This project follows Red-Green-Refactor. All changes to testable source
+files under `ctdd/` should be test-driven: write a failing test first,
+then implement.
+
+### Adding a new module
+
+1. Create `ctdd/<module>.h` with the public prototype.
+2. Create `tests/test_<module>.c`. Set CMock expectations for any
+dependency calls, then assert the result.
+3. Register the test in `tests/CMakeLists.txt`:
+
+```cmake
+add_executable(test_module test_module.c)
+target_include_directories(test_module PRIVATE "${CMAKE_SOURCE_DIR}")
+target_link_libraries(test_module PRIVATE ctdd_module Unity::Unity CMock::CMock)
+target_compile_features(test_module PRIVATE c_std_23)
+cmock_generate_mock(test_module "${CMAKE_SOURCE_DIR}/ctdd/dep.h")
+add_test(NAME test_module COMMAND test_module)
+list(APPEND TEST_TARGETS test_module)
+```
+
+4. Stub `ctdd/<module>.c` with a dummy return, confirm RED, implement,
+confirm GREEN:
+
+```sh
+ninja -C build check
+```
+
+### Mocking a dependency
+
+Use `cmock_generate_mock` in the test target to generate a mock from a
+header. Include `Mock<name>.h` in the test and use the generated API:
+
+```c
+#include "Mockdep.h"
+
+void setUp(void)    { Mockdep_Init(); }
+void tearDown(void) { Mockdep_Verify(); Mockdep_Destroy(); }
+
+void test_something(void) {
+    dep_fn_ExpectAndReturn(arg, expected);
+    TEST_ASSERT_TRUE(module_do_thing());
+}
+```
+
+## Behavioral Guidelines
+
+Reduce common LLM coding mistakes. Bias toward caution over speed.
+For trivial tasks, use judgment.
+
+### Think Before Coding
+
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them, don't pick silently.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### Simplicity First
+
+Minimum code that solves the problem. Nothing speculative.
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- If you write 200 lines and it could be 50, rewrite it.
+
+### Surgical Changes
+
+Touch only what you must. Clean up only your own mess.
+
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+### Goal-Driven Execution
+
+Transform tasks into verifiable goals:
+
+- "Add validation" means: write tests for invalid inputs, then pass.
+- "Fix the bug" means: write a test that reproduces it, then pass.
+- "Refactor X" means: ensure tests pass before and after.
+
 ## Platform Support
 
 The project supports Windows, Linux, macOS, Emscripten, and Android via
