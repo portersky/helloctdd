@@ -15,6 +15,11 @@
 #   IS_IOS           - TRUE if building for iOS
 #   IS_ANDROID       - TRUE if building for Android
 #   IS_EMSCRIPTEN    - TRUE if building for WebAssembly via Emscripten
+#
+# Architecture flags set:
+#   ARCH             - Normalized architecture name (amd64, arm64, wasm, etc.)
+#   IS_AMD64         - TRUE if building for x86_64/amd64
+#   IS_ARM64         - TRUE if building for arm64/aarch64
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -62,3 +67,35 @@ elseif(UNIX)
 else()
     message(FATAL_ERROR "Unknown platform!")
 endif()
+
+# ------------------------------------------------------------------------------
+# Architecture Detection
+# ------------------------------------------------------------------------------
+set(ARCH "")
+set(IS_AMD64 FALSE)
+set(IS_ARM64 FALSE)
+
+if (IS_EMSCRIPTEN)
+    set(ARCH "wasm")
+elseif(DEFINED CMAKE_OSX_ARCHITECTURES)
+    # Cross-compile on macOS (e.g. iOS simulator on Apple Silicon)
+    set(ARCH "${CMAKE_OSX_ARCHITECTURES}")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64|^arm64|^ARM64")
+    set(ARCH "arm64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^x86_64|^AMD64|^x64")
+    set(ARCH "amd64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^armv[0-9]")
+    set(ARCH "arm")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^i[3-6]86")
+    set(ARCH "x86")
+else()
+    set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+if(ARCH STREQUAL "amd64")
+    set(IS_AMD64 TRUE)
+elseif(ARCH STREQUAL "arm64")
+    set(IS_ARM64 TRUE)
+endif()
+
+message(STATUS "Architecture: ${ARCH}")
