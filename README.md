@@ -4,27 +4,29 @@ A C23 project wired for test-driven development using
 [Unity](https://github.com/ThrowTheSwitch/Unity) and
 [CMock](https://github.com/ThrowTheSwitch/CMock).
 
-All dependencies are fetched automatically via CMake `FetchContent` — no
+All dependencies are fetched automatically via CMake `FetchContent` with no
 manual installation required beyond the tools listed below.
 
 ## Requirements
 
-| Tool         | Purpose                                               |
-| ------------ | ----------------------------------------------------- |
-| CMake ≥ 3.21 | Build system                                          |
-| Ninja        | Build backend                                         |
-| C23 compiler | GCC 14+, Clang 18+                                    |
-| Ruby ≥ 3.0   | CMock mock generation                                 |
-| gcovr ≥ 6.0  | Coverage reports — optional (`uv tool install gcovr`) |
+| Tool         | Purpose                                              |
+| ------------ | ---------------------------------------------------- |
+| CMake ≥ 3.21 | Build system                                         |
+| Ninja        | Build backend                                        |
+| C23 compiler | GCC 14+, Clang 18+                                   |
+| Ruby ≥ 3.0   | CMock mock generation                                |
+| gcovr ≥ 6.0  | Coverage reports, optional (`uv tool install gcovr`) |
 
 ## Build
 
 Configure:
+
 ```sh
 cmake -S . -B build -G Ninja
 ```
 
 Build:
+
 ```sh
 ninja -C build
 ```
@@ -32,11 +34,13 @@ ninja -C build
 ## Test
 
 Full Unity output with colors:
+
 ```sh
 ninja -C build check
 ```
 
 CTest summary only:
+
 ```sh
 ninja -C build test
 ```
@@ -48,11 +52,13 @@ binaries by hand.
 ## Coverage
 
 Configure with coverage instrumentation:
+
 ```sh
 cmake -S . -B build-cov -G Ninja -DENABLE_COVERAGE=ON
 ```
 
 Generate the HTML report:
+
 ```sh
 ninja -C build-cov coverage
 ```
@@ -70,11 +76,13 @@ mock files are excluded. Requires GCC or Clang with gcov support, and
 ## Run
 
 Windows:
+
 ```sh
 ./build/main.exe
 ```
 
 Linux / macOS:
+
 ```sh
 ./build/main
 ```
