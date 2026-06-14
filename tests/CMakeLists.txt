@@ -5,9 +5,11 @@ set(MOCK_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/mocks")
 file(MAKE_DIRECTORY "${MOCK_GEN_DIR}")
 
 # Generate a CMock mock from a header and attach it to a target.
-# Usage: cmock_generate_mock(<target> <absolute-path-to-header>)
+# Usage: cmock_generate_mock(<target> <absolute-path-to-header> [config.yml])
 # CMock names generated files Mock<Name>.h/.c (capital M, no separator)
+# If a config file is given it is passed to the Ruby generator with `-o`.
 function(cmock_generate_mock target header)
+    cmake_parse_arguments(ARG "" "" "CONFIG" ${ARGN})
     if (NOT RUBY_EXECUTABLE)
         message(FATAL_ERROR "Ruby is required for CMock generation")
     endif()
@@ -15,12 +17,17 @@ function(cmock_generate_mock target header)
     get_filename_component(header_dir "${header}" DIRECTORY)
     set(mock_src "${MOCK_GEN_DIR}/Mock${name}.c")
     set(mock_hdr "${MOCK_GEN_DIR}/Mock${name}.h")
+    if (ARG_CONFIG)
+        set(CMOCK_CONFIG_FLAG "-o${ARG_CONFIG}")
+        set(CMOCK_CONFIG_DEPENDS "${ARG_CONFIG}")
+    endif()
     add_custom_command(
         OUTPUT  "${mock_src}" "${mock_hdr}"
         COMMAND "${RUBY_EXECUTABLE}" "${CMOCK_SCRIPT}"
+                ${CMOCK_CONFIG_FLAG}
                 "--mock_path=${MOCK_GEN_DIR}"
                 "${header}"
-        DEPENDS "${header}"
+        DEPENDS "${header}" ${CMOCK_CONFIG_DEPENDS}
         COMMENT "CMock: generating Mock${name}"
         VERBATIM
     )

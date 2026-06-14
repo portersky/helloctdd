@@ -166,3 +166,27 @@ void test_something_logs(void) {
 The `_Expect` call records the expected argument. CMock verifies the
 actual argument matches at call time using string comparison, and
 `Mocklogger_Verify` confirms the expected number of calls were made.
+
+## Configuring CMock
+
+Pass a config file as the third argument to `cmock_generate_mock`:
+
+```cmake
+cmock_generate_mock(test_mymodule "${CMAKE_SOURCE_DIR}/ctdd/logger.h"
+                    "cmock_config.yml")
+```
+
+The file is loaded by the CMock Ruby generator with `-o`. A typical
+`tests/cmock_config.yml` enables plugins:
+
+```yaml
+:cmock:
+  :plugins:
+    - :ignore
+    - :ignore_arg
+    - :return_thru_ptr
+```
+
+Use `:ignore` to skip certain mocks, `:ignore_arg` to stop checking
+particular parameters, or `:return_thru_ptr` to have CMock write
+through pointer return values automatically.
