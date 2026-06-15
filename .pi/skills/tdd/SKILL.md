@@ -38,9 +38,20 @@ before the implementation was missing.
 
 Create `<src>/<module>.h` with the public prototype(s).
 
+C:
+
 ```c
 #pragma once
 #include <stddef.h>
+
+int fn_name(int arg);
+```
+
+C++:
+
+```cpp
+#pragma once
+#include <cstddef>
 
 auto fn_name(int arg) -> int;
 ```
@@ -122,7 +133,19 @@ list(APPEND TEST_TARGETS test_<module>)
 
 Create `<src>/<module>.c` with a dummy return:
 
+C:
+
 ```c
+#include "<src>/<module>.h"
+
+int fn_name(int arg) {
+    return 0;
+}
+```
+
+C++:
+
+```cpp
 #include "<src>/<module>.h"
 
 auto fn_name(int arg) -> int {
