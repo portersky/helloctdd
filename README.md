@@ -8,6 +8,16 @@ template when scaffolding new projects.
 All dependencies are fetched automatically via CMake `FetchContent` with no
 manual installation required beyond the tools listed below.
 
+## License
+
+This template is licensed under the MIT License. The license covers the
+CMake build files, `deps/` scripts, and other template infrastructure.
+
+Because this is a project template, your own source code is not bound by
+this license. You are free to choose any license for your project that is
+compatible with MIT. Simply replace the `LICENSE` file with your chosen
+license.
+
 ## Requirements
 
 | Tool         | Purpose                                              |
