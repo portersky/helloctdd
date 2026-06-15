@@ -1,6 +1,7 @@
-#include "ctdd/str.h"
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
+
+#include "ctdd/str.h"
 
 int str_starts_with(char const* s, char const* prefix) {
     return strncmp(s, prefix, strlen(prefix)) == 0;

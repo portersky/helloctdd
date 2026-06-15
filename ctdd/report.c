@@ -1,6 +1,7 @@
+#include <stdio.h>
+
 #include "ctdd/report.h"
 #include "ctdd/logger.h"
-#include <stdio.h>
 
 void report_value(char const* label, int value) {
     char buf[256];

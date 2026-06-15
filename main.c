@@ -1,4 +1,4 @@
-// Template placeholder — replace with your own entry point.
+// Template placeholder: replace with your own entry point.
 // Remove or rename this file when scaffolding a new project.
 
 #include "ctdd/str.h"

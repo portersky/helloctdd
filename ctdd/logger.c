@@ -1,6 +1,7 @@
+#include <stdio.h>
+
 #include "ctdd/logger.h"
 #include "ctdd/log_write.h"
-#include <stdio.h>
 
 static log_level s_level = LOG_DEBUG;
 
