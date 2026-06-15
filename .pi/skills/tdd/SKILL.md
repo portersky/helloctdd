@@ -2,10 +2,13 @@
 name: tdd
 description: Test-driven development with Unity and CMock. Use when adding new
   modules, writing tests, mocking dependencies, or following Red-Green-Refactor
-  in this C23 project.
+  in projects scaffolded from the ctdd template.
 ---
 
 # TDD Skill
+
+> Replace `<src>/` with the project source directory (e.g. `ctdd/`, `src/`).
+> Replace `<module>` with the module name (e.g. `counter`, `timer`).
 
 ## Quick Reference
 
@@ -20,7 +23,7 @@ description: Test-driven development with Unity and CMock. Use when adding new
 
 ## Red-Green-Refactor
 
-Every change to `ctdd/` follows this cycle:
+Every change to `<src>/` follows this cycle:
 
 1. **RED** — Write a failing test. Confirm it fails.
 2. **GREEN** — Write the minimum code to pass. Confirm it passes.
@@ -33,7 +36,7 @@ before the implementation was missing.
 
 ### 1. Write the header
 
-Create `ctdd/<module>.h` with the public prototype(s).
+Create `<src>/<module>.h` with the public prototype(s).
 
 ```c
 #pragma once
@@ -50,7 +53,7 @@ Create `tests/test_<module>.c`. Two patterns exist:
 
 ```c
 #include "unity.h"
-#include "ctdd/<module>.h"
+#include "<src>/<module>.h"
 
 void setUp(void) {}
 void tearDown(void) {}
@@ -70,7 +73,7 @@ int main(void) {
 
 ```c
 #include "unity.h"
-#include "ctdd/<module>.h"
+#include "<src>/<module>.h"
 #include "Mock<dep>.h"
 
 void setUp(void)    { Mock<dep>_Init(); }
@@ -97,7 +100,7 @@ Add after existing test targets, before the `check` target:
 ```cmake
 add_executable(test_<module> test_<module>.c)
 target_include_directories(test_<module> PRIVATE "${CMAKE_SOURCE_DIR}")
-target_link_libraries(test_<module> PRIVATE ctdd_<module> Unity::Unity)
+target_link_libraries(test_<module> PRIVATE <src>_<module> Unity::Unity)
 target_compile_features(test_<module> PRIVATE c_std_23)
 add_test(NAME test_<module> COMMAND test_<module>)
 list(APPEND TEST_TARGETS test_<module>)
@@ -108,31 +111,31 @@ list(APPEND TEST_TARGETS test_<module>)
 ```cmake
 add_executable(test_<module> test_<module>.c)
 target_include_directories(test_<module> PRIVATE "${CMAKE_SOURCE_DIR}")
-target_link_libraries(test_<module> PRIVATE ctdd_<module> Unity::Unity CMock::CMock)
+target_link_libraries(test_<module> PRIVATE <src>_<module> Unity::Unity CMock::CMock)
 target_compile_features(test_<module> PRIVATE c_std_23)
-cmock_generate_mock(test_<module> "${CMAKE_SOURCE_DIR}/ctdd/<dep>.h")
+cmock_generate_mock(test_<module> "${CMAKE_SOURCE_DIR}/<src>/<dep>.h")
 add_test(NAME test_<module> COMMAND test_<module>)
 list(APPEND TEST_TARGETS test_<module>)
 ```
 
 ### 4. Stub the implementation
 
-Create `ctdd/<module>.c` with a dummy return:
+Create `<src>/<module>.c` with a dummy return:
 
 ```c
-#include "ctdd/<module>.h"
+#include "<src>/<module>.h"
 
 auto fn_name(int arg) -> int {
     return 0;
 }
 ```
 
-Register the library in `ctdd/CMakeLists.txt`:
+Register the library in `<src>/CMakeLists.txt`:
 
 ```cmake
-add_library(ctdd_<module> <module>.c)
-target_include_directories(ctdd_<module> PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_compile_features(ctdd_<module> PRIVATE c_std_23)
+add_library(<src>_<module> <module>.c)
+target_include_directories(<src>_<module> PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_features(<src>_<module> PRIVATE c_std_23)
 ```
 
 ### 5. Confirm RED
@@ -215,7 +218,7 @@ Before considering a task done:
 - [ ] Header declares the public API
 - [ ] Test covers at least one happy path, one edge case
 - [ ] Test registered in `tests/CMakeLists.txt`
-- [ ] Library registered in `ctdd/CMakeLists.txt` (if new module)
+- [ ] Library registered in `<src>/CMakeLists.txt` (if new module)
 - [ ] `ninja -C build check` passes with zero failures
 - [ ] No semicolons after closing braces
 - [ ] Trailing return type on all functions
