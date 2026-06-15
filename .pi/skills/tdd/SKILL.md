@@ -25,9 +25,9 @@ description: Test-driven development with Unity and CMock. Use when adding new
 
 Every change to `<src>/` follows this cycle:
 
-1. **RED** — Write a failing test. Confirm it fails.
-2. **GREEN** — Write the minimum code to pass. Confirm it passes.
-3. **REFACTOR** — Clean up without changing behavior. Tests still pass.
+1. **RED** : Write a failing test. Confirm it fails.
+2. **GREEN** : Write the minimum code to pass. Confirm it passes.
+3. **REFACTOR** : Clean up without changing behavior. Tests still pass.
 
 Never skip the RED step. If the test passes immediately, you wrote the test
 before the implementation was missing.

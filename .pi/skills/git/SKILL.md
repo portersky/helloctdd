@@ -73,8 +73,15 @@ feat: add timer — it's fast     # em dash not allowed
 
 ## Committing
 
+Stage changes:
+
 ```sh
 git add -A
+```
+
+Commit:
+
+```sh
 git commit -m "type: subject"
 ```
 
@@ -93,8 +100,15 @@ This project uses semantic versioning for template releases.
 
 ### Creating a tag
 
+Create the tag:
+
 ```sh
 git tag -a v0.1.0 -m "Release v0.1.0"
+```
+
+Push the tag:
+
+```sh
 git push origin v0.1.0
 ```
 
@@ -124,8 +138,15 @@ git tag -l
 
 ### Deleting a tag
 
+Delete the local tag:
+
 ```sh
 git tag -d v0.1.0
+```
+
+Remove the remote tag:
+
+```sh
 git push origin --delete v0.1.0
 ```
 
