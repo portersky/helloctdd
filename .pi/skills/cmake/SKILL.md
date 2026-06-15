@@ -1,11 +1,14 @@
 ---
 name: cmake
-description: CMake build configuration for the ctdd template project. Use when
-  adding modules, adding dependencies, configuring coverage or sanitizers, or
-  understanding the build system.
+description: CMake build configuration for projects scaffolded from the ctdd
+  template. Use when adding modules, adding dependencies, configuring coverage
+  or sanitizers, or understanding the build system.
 ---
 
 # CMake Skill
+
+> Replace `<src>/` with the project source directory (e.g. `ctdd/`, `src/`).
+> Replace `<module>` with the module name (e.g. `counter`, `timer`).
 
 ## Build Commands
 
@@ -21,19 +24,19 @@ description: CMake build configuration for the ctdd template project. Use when
 
 ## Adding a Module
 
-Modules live in `ctdd/` as static libraries. Register them in
-`ctdd/CMakeLists.txt`:
+Modules live in `<src>/` as static libraries. Register them in
+`<src>/CMakeLists.txt`:
 
 ```cmake
-add_library(ctdd_<module> <module>.c)
-target_include_directories(ctdd_<module> PUBLIC "${CMAKE_SOURCE_DIR}")
-target_compile_features(ctdd_<module> PRIVATE c_std_23)
+add_library(<src>_<module> <module>.c)
+target_include_directories(<src>_<module> PUBLIC "${CMAKE_SOURCE_DIR}")
+target_compile_features(<src>_<module> PRIVATE c_std_23)
 ```
 
 Link into `main` in the root `CMakeLists.txt`:
 
 ```cmake
-target_link_libraries(main PRIVATE ... ctdd_<module>)
+target_link_libraries(main PRIVATE ... <src>_<module>)
 ```
 
 ## Adding a Dependency
@@ -82,10 +85,10 @@ Place it after `include(Platform)` and `include(Flags)`.
 
 ### 3. Link with `<Name>::<Name>`
 
-In `ctdd/CMakeLists.txt` or `tests/CMakeLists.txt` as needed:
+In `<src>/CMakeLists.txt` or `tests/CMakeLists.txt` as needed:
 
 ```cmake
-target_link_libraries(ctdd_<module> PRIVATE <Name>::<Name>)
+target_link_libraries(<src>_<module> PRIVATE <Name>::<Name>)
 ```
 
 ## Platform Flags
@@ -136,7 +139,7 @@ Generated mocks go into `build/mocks/` as `Mock<name>.h/.c`.
 ## Coverage
 
 Enabled via `-DENABLE_COVERAGE=ON`. Requires GCC or Clang + `gcovr`.
-Report at `build-cov/coverage/index.html`. Only `ctdd/` sources are
+Report at `build-cov/coverage/index.html`. Only `<src>/` sources are
 measured; Unity, CMock, and mocks are excluded.
 
 ## Sanitizers
