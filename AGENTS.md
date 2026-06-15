@@ -26,6 +26,56 @@ For committing, tagging, and branching, load the `git` skill with
 Dependencies are managed via custom `Find*.cmake` scripts in `deps/`.
 See `/skill:cmake` for adding new dependencies.
 
+## Build
+
+Configure:
+
+```sh
+cmake -S . -B build -G Ninja
+```
+
+Build:
+
+```sh
+ninja -C build
+```
+
+Run tests (full Unity output):
+
+```sh
+ninja -C build check
+```
+
+Run tests (CTest summary only):
+
+```sh
+ninja -C build test
+```
+
+Configure with coverage:
+
+```sh
+cmake -S . -B build-cov -G Ninja -DENABLE_COVERAGE=ON
+```
+
+Generate coverage report:
+
+```sh
+ninja -C build-cov coverage
+```
+
+Open `build-cov/coverage/index.html` in a browser to view results.
+
+Run the application:
+
+```sh
+./build/main
+```
+
+On Windows use `./build/main.exe`.
+
+See `/skill:cmake` for coverage and sanitizer details.
+
 ## Coding Conventions
 
 ### C
