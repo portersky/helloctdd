@@ -21,64 +21,10 @@ For committing, tagging, and branching, load the `git` skill with
 - **CMake minimum:** 3.21
 - **C standard:** C23
 
-### Commands
-
-Configure (default):
-```sh
-cmake -S . -B build -G Ninja
-```
-
-Configure with coverage:
-```sh
-cmake -S . -B build-cov -G Ninja -DENABLE_COVERAGE=ON
-```
-
-Build:
-```sh
-ninja -C build
-```
-
-Run tests (full Unity output, colored):
-```sh
-ninja -C build check
-```
-
-Run tests (CTest summary only):
-```sh
-ninja -C build test
-```
-
-Run tests and generate coverage HTML:
-```sh
-ninja -C build-cov coverage
-```
-
-Run (Linux/macOS):
-```sh
-./build/main
-```
-
-Run (Windows):
-```sh
-./build/main.exe
-```
-
 ### Dependencies
 
 Dependencies are managed via custom `Find*.cmake` scripts in `deps/`.
-These scripts use `FetchContent` under the hood to download and build
-libraries automatically.
-
-To add a new dependency:
-
-1. Add the corresponding `Find<name>.cmake` to `deps/`
-2. Add `find_package(<name> REQUIRED)` to `CMakeLists.txt`
-3. Link with `<name>::<name>` in `target_link_libraries()`
-
-### CMake Module Path
-
-`deps/` is added to `CMAKE_MODULE_PATH` so `find_package()` resolves
-to the custom scripts instead of system-installed packages.
+See `/skill:cmake` for adding new dependencies.
 
 ## Coding Conventions
 
@@ -127,23 +73,7 @@ Both C and C++ follow the same include order:
 
 ## Commit Messages
 
-- Follow the 50/72 rule:
-  - Subject line: max 50 characters
-  - Body lines: wrapped at 72 characters
-- Use conventional commit prefixes (`feat:`, `fix:`, `docs:`, `chore:`,
-  etc.)
-- Separate subject from body with a blank line
-- Do **not** add yourself as a co-author (`Co-Authored-By:` trailers are
-  forbidden)
-
-Example:
-
-```
-feat: add stopwatch timer
-
-Replace Hello World with a live stopwatch that prints elapsed time
-in HH:MM:SS.mmm format, updating every 10ms with color output.
-```
+See `/skill:git` for commit message conventions, types, and examples.
 
 ## Documentation (Markdown)
 
@@ -169,15 +99,17 @@ in HH:MM:SS.mmm format, updating every 10ms with color output.
 
 ## Source Layout
 
-```text
+```
 ctdd/
   str.h / str.c        Pure string utilities (no dependencies)
-  report.h / report.c  Formats a value and calls log_message()
-  logger.h / logger.c  Real log_message via printf to stdout
-main.c                 Entry point
+  report.h / report.c  Formats a value and calls log_info()
+  logger.h / logger.c  Log levels, emits via log_write()
+  log_write.h / log_write.c  Real log_write via printf to stdout
+main.c                 Entry point (template placeholder)
 tests/
   test_str.c           Unity state-based tests for ctdd/str
   test_report.c        Interaction-based tests using CMock
+  test_logger.c        Interaction-based tests using CMock
 deps/
   FindUnity.cmake      Fetches Unity v2.6.1 via ZIP
   FindCMock.cmake      Fetches CMock v2.6.0 via ZIP
