@@ -1,8 +1,9 @@
 # ctdd
 
-A C23 project wired for test-driven development using
+A C23 template project wired for test-driven development using
 [Unity](https://github.com/ThrowTheSwitch/Unity) and
-[CMock](https://github.com/ThrowTheSwitch/CMock).
+[CMock](https://github.com/ThrowTheSwitch/CMock). Use it as the core
+template when scaffolding new projects.
 
 All dependencies are fetched automatically via CMake `FetchContent` with no
 manual installation required beyond the tools listed below.

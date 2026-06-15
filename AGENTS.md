@@ -2,8 +2,18 @@
 
 ## Project Overview
 
-`ctdd` is a C23 project wired for test-driven development using
-Unity and CMock.
+`ctdd` is a C23 template project wired for test-driven development
+using Unity and CMock. Use it as the core template when scaffolding
+new projects.
+
+For TDD workflows (adding modules, writing tests, mocking), load the
+`tdd` skill with `/skill:tdd`.
+
+For build configuration (dependencies, coverage, sanitizers), load the
+`cmake` skill with `/skill:cmake`.
+
+For committing, tagging, and branching, load the `git` skill with
+`/skill:git`.
 
 ## Build System
 
@@ -72,31 +82,40 @@ to the custom scripts instead of system-installed packages.
 
 ## Coding Conventions
 
+### C
+
 - **Language:** C23
-- **Trailing return type** for function signatures (e.g. `auto fn() -> void`)
-- **4-space indentation**
-- **No semicolons after closing braces** for namespaces/classes
-- `auto` for obvious types (e.g. `auto main(...) -> int`)
 - **East const** (e.g. `char const*` not `const char*`)
+- **4-space indentation**
+- `<>` includes for system headers (C stdlib, OS, etc.)
+- `""` includes for third-party and local headers
+- **Naming:** `snake_case` for variables, functions, and structs
+- **Naming:** `SCREAMING_SNAKE_CASE` only for macros and constants
+
+### C++
+
+- **Trailing return type** for function signatures
+  (e.g. `auto fn() -> void`)
+- `auto` for obvious types (e.g. `auto main(...) -> int`)
+- **No semicolons after closing braces** for namespaces/classes
 - **Trailing return type** for all function definitions, including
   operators (e.g. `auto operator=(T&&) noexcept -> T&`)
-- **Public members first** in class declarations, private members at the
-  bottom
-- `<>` includes only for system headers (std, OS, etc.)
-- `""` includes for third-party dependencies (e.g. `fmt`,
-  `nlohmann/json`)
-- **Naming:** `snake_case` for variables, functions, and classes
-- **Naming:** `SCREAMING_SNAKE_CASE` only for macros and constants
-- Include order:
-  1. C++ standard library headers (`<chrono>`, `<vector>`, etc.)
-  2. *(blank line)*
-  3. C standard library headers (`<stdlib.h>`, `<string.h>`, etc.)
-  4. *(blank line)*
-  5. OS-specific headers (Windows API, POSIX, etc.)
-  6. *(blank line)*
-  7. Third-party dependencies (`"fmt/core.h"`, etc.)
-  8. *(blank line)*
-  9. Local/project headers
+- **Public members first** in class declarations, private members at
+  the bottom
+
+### Include Order
+
+Both C and C++ follow the same include order:
+
+1. C++ standard library headers (`<chrono>`, `<vector>`, etc.)
+2. *(blank line)*
+3. C standard library headers (`<stdlib.h>`, `<string.h>`, etc.)
+4. *(blank line)*
+5. OS-specific headers (Windows API, POSIX, etc.)
+6. *(blank line)*
+7. Third-party dependencies (`"fmt/core.h"`, etc.)
+8. *(blank line)*
+9. Local/project headers
 
 ## Shell Scripts
 
@@ -164,53 +183,6 @@ deps/
   FindCMock.cmake      Fetches CMock v2.6.0 via ZIP
 ```
 
-## TDD Workflow
-
-This project follows Red-Green-Refactor. All changes to testable source
-files under `ctdd/` should be test-driven: write a failing test first,
-then implement.
-
-### Adding a new module
-
-1. Create `ctdd/<module>.h` with the public prototype.
-2. Create `tests/test_<module>.c`. Set CMock expectations for any
-dependency calls, then assert the result.
-3. Register the test in `tests/CMakeLists.txt`:
-
-```cmake
-add_executable(test_module test_module.c)
-target_include_directories(test_module PRIVATE "${CMAKE_SOURCE_DIR}")
-target_link_libraries(test_module PRIVATE ctdd_module Unity::Unity CMock::CMock)
-target_compile_features(test_module PRIVATE c_std_23)
-cmock_generate_mock(test_module "${CMAKE_SOURCE_DIR}/ctdd/dep.h")
-add_test(NAME test_module COMMAND test_module)
-list(APPEND TEST_TARGETS test_module)
-```
-
-4. Stub `ctdd/<module>.c` with a dummy return, confirm RED, implement,
-confirm GREEN:
-
-```sh
-ninja -C build check
-```
-
-### Mocking a dependency
-
-Use `cmock_generate_mock` in the test target to generate a mock from a
-header. Include `Mock<name>.h` in the test and use the generated API:
-
-```c
-#include "Mockdep.h"
-
-void setUp(void)    { Mockdep_Init(); }
-void tearDown(void) { Mockdep_Verify(); Mockdep_Destroy(); }
-
-void test_something(void) {
-    dep_fn_ExpectAndReturn(arg, expected);
-    TEST_ASSERT_TRUE(module_do_thing());
-}
-```
-
 ## Behavioral Guidelines
 
 Reduce common LLM coding mistakes. Bias toward caution over speed.
@@ -247,8 +219,3 @@ Transform tasks into verifiable goals:
 - "Add validation" means: write tests for invalid inputs, then pass.
 - "Fix the bug" means: write a test that reproduces it, then pass.
 - "Refactor X" means: ensure tests pass before and after.
-
-## Platform Support
-
-The project supports Windows, Linux, macOS, Emscripten, and Android via
-`Platform.cmake` and `Flags.cmake` in `deps/`.
