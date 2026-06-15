@@ -88,7 +88,21 @@ Linux / macOS:
 ./build/main
 ```
 
-## Adding a new module (TDD workflow)
+## Renaming the Project
+
+To use this template for a new project, rename `ctdd` to your project
+name:
+
+1. Rename the `ctdd/` directory to `<src>/`.
+2. Replace `ctdd` with `<src>` in:
+   - `CMakeLists.txt` (project name, `target_link_libraries`)
+   - `ctdd/CMakeLists.txt` (library names)
+   - All source `#include` directives
+   - `tests/CMakeLists.txt` (library references)
+3. Update the `project()` call in `CMakeLists.txt`.
+4. Update `main.c` to include your new headers.
+
+Example: `ctdd/` becomes `mylib/`, `ctdd_str` becomes `mylib_str`.
 
 ### 1. Write the header
 
