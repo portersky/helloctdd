@@ -1,0 +1,17 @@
+{
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    ".git",
+    "build"
+  ],
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "options": {
+        "printWidth": 80,
+        "proseWrap": "always"
+      }
+    }
+  ]
+}

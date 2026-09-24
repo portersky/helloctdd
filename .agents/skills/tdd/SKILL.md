@@ -1,11 +1,19 @@
 ---
 name: tdd
-description: Test-driven development with Unity and CMock. Use when adding new
-  modules, writing tests, mocking dependencies, or following Red-Green-Refactor
-  in projects scaffolded from the ctdd template.
+description: Test-driven development with Unity and CMock for C and C++
+  projects started from the ctdd template. Use when adding modules, writing
+  tests, or following Red-Green-Refactor.
 ---
 
 # TDD Skill
+
+This repository is a starter template, and its checked-in examples are C.
+Use these workflows as examples when building a C or C++ project from the
+template; do not treat the sample modules as required product features.
+Unity is used for both C and C++ tests. The CMock examples below apply to
+C-compatible interfaces. CMock does not provide general mocking for C++
+classes, so choose an appropriate fake or mocking tool for C++ APIs. When a
+C++ test calls a C API, expose that API with C linkage.
 
 > Replace `<src>/` with the project source directory (e.g. `ctdd/`, `src/`).
 > Replace `<module>` with the module name (e.g. `counter`, `timer`).
@@ -58,7 +66,9 @@ auto fn_name(int arg) -> int;
 
 ### 2. Write the test
 
-Create `tests/test_<module>.c`. Two patterns exist:
+Create `tests/test_<module>.c` for C or
+`tests/test_<module>.cpp` for C++. Choose a state-based Unity test for pure
+logic or an interaction-based test for a C dependency:
 
 **State-based** (pure functions, no mocks):
 
@@ -80,7 +90,27 @@ int main(void) {
 }
 ```
 
-**Interaction-based** (mocking a dependency):
+A C++ state-based test uses a `.cpp` source and the same Unity assertions:
+
+```cpp
+#include "unity.h"
+#include "<src>/<module>.h"
+
+auto setUp() -> void {}
+auto tearDown() -> void {}
+
+auto test_fn_name_returns_expected() -> void {
+    TEST_ASSERT_EQUAL_INT(42, fn_name(1));
+}
+
+auto main() -> int {
+    UNITY_BEGIN();
+    RUN_TEST(test_fn_name_returns_expected);
+    return UNITY_END();
+}
+```
+
+**Interaction-based** (mocking a C-compatible dependency with CMock):
 
 ```c
 #include "unity.h"
@@ -104,7 +134,9 @@ int main(void) {
 
 ### 3. Register the test in `tests/CMakeLists.txt`
 
-Add after existing test targets, before the `check` target:
+Add after existing test targets, before the `check` target. Use the source
+extension and compile feature for the test language. The current examples
+are C:
 
 **State-based (no mock):**
 
@@ -129,11 +161,23 @@ add_test(NAME test_<module> COMMAND test_<module>)
 list(APPEND TEST_TARGETS test_<module>)
 ```
 
+For a C++ Unity test, use a `.cpp` test source and select the C++ standard
+for that target, for example:
+
+```cmake
+add_executable(test_<module> test_<module>.cpp)
+target_include_directories(test_<module> PRIVATE "${CMAKE_SOURCE_DIR}")
+target_link_libraries(test_<module> PRIVATE <src>_<module> Unity::Unity)
+target_compile_features(test_<module> PRIVATE cxx_std_23)
+add_test(NAME test_<module> COMMAND test_<module>)
+list(APPEND TEST_TARGETS test_<module>)
+```
+
+Replace `cxx_std_23` with the standard chosen for the derived project.
+
 ### 4. Stub the implementation
 
-Create `<src>/<module>.c` with a dummy return:
-
-C:
+For C, create `<src>/<module>.c` with a dummy return:
 
 ```c
 #include "<src>/<module>.h"
@@ -143,7 +187,7 @@ int fn_name(int arg) {
 }
 ```
 
-C++:
+For C++, create `<src>/<module>.cpp`:
 
 ```cpp
 #include "<src>/<module>.h"
@@ -153,12 +197,20 @@ auto fn_name(int arg) -> int {
 }
 ```
 
-Register the library in `<src>/CMakeLists.txt`:
+Register a C library in `<src>/CMakeLists.txt`:
 
 ```cmake
 add_library(<src>_<module> <module>.c)
 target_include_directories(<src>_<module> PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_compile_features(<src>_<module> PRIVATE c_std_23)
+```
+
+For C++, use the `.cpp` source and the standard selected for the project:
+
+```cmake
+add_library(<src>_<module> <module>.cpp)
+target_include_directories(<src>_<module> PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_features(<src>_<module> PRIVATE cxx_std_23)
 ```
 
 ### 5. Confirm RED
@@ -239,11 +291,11 @@ Open `build-cov/coverage/index.html` in a browser.
 Before considering a task done:
 
 - [ ] Header declares the public API
-- [ ] Test covers at least one happy path, one edge case
-- [ ] Test registered in `tests/CMakeLists.txt`
+- [ ] Test covers at least one happy path and one edge case
+- [ ] Test registered in `tests/CMakeLists.txt` with the correct language
 - [ ] Library registered in `<src>/CMakeLists.txt` (if new module)
 - [ ] `ninja -C build check` passes with zero failures
-- [ ] No semicolons after closing braces
-- [ ] Trailing return type on all functions
-- [ ] East const (`char const*`)
-- [ ] `snake_case` naming
+- [ ] CMock is used only for C-compatible interfaces
+- [ ] C++ targets select the intended C++ standard
+- [ ] C++ code follows the trailing-return-type convention
+- [ ] East const (`char const*`) and `snake_case` naming are used

@@ -1,11 +1,18 @@
 ---
 name: cmake
-description: CMake build configuration for projects scaffolded from the ctdd
-  template. Use when adding modules, adding dependencies, configuring coverage
-  or sanitizers, or understanding the build system.
+description: CMake build configuration for C and C++ projects started from
+  the ctdd template. Use when adding modules or dependencies, or configuring
+  builds, coverage, and sanitizers.
 ---
 
 # CMake Skill
+
+This repository is a starter template, not an application whose sample
+modules define required features. Its checked-in targets are C examples
+using C23. When adding C++ targets, use `.cpp` sources and select the
+project's C++ standard explicitly (for example, `cxx_std_23`). Unity can
+be used by C++ tests. CMock is for C-compatible interfaces, not C++ class
+mocking.
 
 > Replace `<src>/` with the project source directory (e.g. `ctdd/`, `src/`).
 > Replace `<module>` with the module name (e.g. `counter`, `timer`).
@@ -24,14 +31,27 @@ description: CMake build configuration for projects scaffolded from the ctdd
 
 ## Adding a Module
 
-Modules live in `<src>/` as static libraries. Register them in
-`<src>/CMakeLists.txt`:
+Modules live in `<src>/` as static libraries. The current example is C;
+register C modules in `<src>/CMakeLists.txt`:
 
 ```cmake
 add_library(<src>_<module> <module>.c)
 target_include_directories(<src>_<module> PUBLIC "${CMAKE_SOURCE_DIR}")
 target_compile_features(<src>_<module> PRIVATE c_std_23)
 ```
+
+For a C++ module, use a `.cpp` source and select the standard used by the
+derived project:
+
+```cmake
+add_library(<src>_<module> <module>.cpp)
+target_include_directories(<src>_<module> PUBLIC "${CMAKE_SOURCE_DIR}")
+target_compile_features(<src>_<module> PRIVATE cxx_std_23)
+```
+
+Replace `cxx_std_23` if the project uses a different C++ standard. Likewise,
+choose `.c`/`c_std_23` or `.cpp`/`cxx_std_23` for the application's entry
+point and test sources.
 
 Link into `main` in the root `CMakeLists.txt`:
 
@@ -121,6 +141,9 @@ target_compile_definitions(<target> PRIVATE ${BASE_DEFINITIONS})
 ```
 
 ## CMock Mock Generation
+
+CMock generates mocks for C-compatible interfaces. Do not pass C++ class
+headers to this helper; use a suitable fake or mocking tool for C++ APIs.
 
 `tests/CMakeLists.txt` provides a `cmock_generate_mock` helper function:
 
